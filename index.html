@@ -1,0 +1,106 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Ice Dodo - Official Site</title>
+    <link rel="icon" href="images/dodoloader.webp">
+    <meta name="description" content="Modded Ice Dodo by Onionfist.com">
+    <style type="text/css" media="screen">
+        * {box-sizing: border-box;}
+        html {
+            background-color: black;
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            height: 100%;
+            color:white;
+        }
+        #Menu {
+            display:inline-block;
+            overflow-y: auto;
+            width: 50vw;
+            height: calc(100vh - 15px);
+            background-color: #151515;
+            /* padding-left: 15px;
+            padding-right: 15px; */
+            box-shadow: 0px 30px 40px gray;
+            margin: 15px;
+        }
+        #playNow {
+            margin-bottom:10px;
+            width:25%;
+            border: 1px solid #4c4c4c;
+            border-radius: 10px;
+        }
+    </style>
+  </head>
+  <body style="font-family: ubuntu;">
+    <center>    
+    <div id="Menu">
+        <div style="position:sticky;top:0;background-color: #151515;">
+            <h1 style="margin-top:15px;">DodoLoader</h1>
+            <p>Original Ice Dodo by Onionfist.com</p>
+            <p>Dodoloader by Guy</p>
+            <button id="playNow" onclick="window.location.href='singleplayer'">Play Now</button>
+        </div>
+        <form id="Cupadder">
+            <h3>Add Cup</h3>
+            <input type="text" id="name">
+            <label for="name">Name of cup</label>
+            <br><br>
+            <input style="width:90%;margin-left:5%;margin-right:5%;" type="text" id="maps">
+            <label for="maps">Maps for cup<br>make sure you type it like this example:<br>[{diff:1,id:"glass_walkway",name:"Glass Walkway"},{diff:1,id:"lucid_dreams",name:"Lucid Dreams"}]<br>the diff is the difficulty that map will show as</label>
+            <br><br>
+            <input type="file" accept="image/png" id="image">
+            <label for="image">Image for cup (PNG only)</label>
+        </form>
+        <button onclick="SaveConfig()">Add Cup</button>
+        <button onclick="localStorage.clear();window.location.reload()">Clear Custom Cups</button>
+        <br>
+        <p>Custom Cups Added</p>
+    </div>
+    <script type="text/javascript">
+        if (localStorage.getItem("CupNames") == null){
+            localStorage.setItem("CupNames",JSON.stringify([]))
+        }
+        if (localStorage.getItem("CupMaps") == null){
+            localStorage.setItem("CupMaps",JSON.stringify([]))
+        }
+        if (localStorage.getItem("CupImages") == null){
+            localStorage.setItem("CupImages",JSON.stringify([]))
+        }
+        function LocalList(name) {return JSON.parse(localStorage.getItem(name))}
+        function SaveConfig(){
+            var name = document.getElementById("name").value;
+            var maps = document.getElementById("maps").value;
+            var image = document.getElementById("image").files[0];
+
+            var cupNames = LocalList("CupNames");
+            cupNames.push(name);
+            localStorage.setItem("CupNames", JSON.stringify(cupNames));
+
+            var cupMaps = LocalList("CupMaps");
+            cupMaps.push(maps.replace(/\s/g, ""));
+            localStorage.setItem("CupMaps", JSON.stringify(cupMaps));
+
+            var reader = new FileReader();
+            reader.onload = function(){
+                var base64 = reader.result;
+                var cupImages = LocalList("CupImages");
+                cupImages.push(base64);
+                localStorage.setItem("CupImages", JSON.stringify(cupImages));
+            };
+            reader.readAsDataURL(image);
+            window.location.reload();
+        }
+        function GetCustomCups(){
+            for (let i = 0; i < LocalList("CupNames").length; i++){ {
+                document.body.innerHTML += "<div style='padding:5px;border: 2px solid #1e1e1e;border-radius: 5px;width:10vw;height:10vw; background-image: url("+LocalList("CupImages")[i]+");background-size: cover;'><p style='padding:2px;background-color: white;border-radius: 5px;position:relative;top:20%;width:50%;'>"+LocalList("CupNames")[i]+"</p></div>";
+            }}
+        }
+        GetCustomCups();
+    </script>
+    
+</center></body></html>
+
