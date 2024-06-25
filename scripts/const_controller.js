@@ -1,3 +1,19 @@
+const Addcup = JSON.parse(localStorage.getItem("CupNames"))
+
+let AddMapTocup = JSON.parse(localStorage.getItem("CupMaps"))
+console.log(AddMapTocup);
+function convertStringToArray(input) {
+    const jsonString = `[${input}]`;
+    const resultArray = JSON.parse(jsonString);
+    return resultArray;
+}
+const inputString = AddMapTocup;
+const formattedInputString = inputString.toString().replace(/(\w+):/g, '"$1":');
+AddMapTocup = convertStringToArray(formattedInputString);
+console.log(AddMapTocup);
+
+const Addskin = JSON.parse(localStorage.getItem("CupImages"))
+// ...
 let speedtoggle = document.getElementById("speedoverwrite")
 let speedOverwrite = document.getElementById("speed");
 // ...

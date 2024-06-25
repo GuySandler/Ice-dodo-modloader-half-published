@@ -160,7 +160,41 @@
             $("#Cdown").click(function () {
                 camera.rotation.x += .25;
             });
-            
+            $(document).keypress(function(event) {
+                // move
+                if (event.key === "j") {
+                    camera.position.x += 1;
+                }
+                if (event.key === "l") {
+                    camera.position.x -= 1;
+                }
+                if (event.key === "k") {
+                    camera.position.z += 1;
+                }
+                if (event.key === "i") {
+                    camera.position.z -= 1;
+                }
+                if (event.key === "p") {
+                    camera.position.y += 1;
+                }
+                if (event.key === ";") {
+                    camera.position.y -= 1;
+                }
+                // rotation
+                if (event.key === "J") {
+                    camera.rotation.y -= .25;
+                    alert(camera.rotation.y)
+                }
+                if (event.key === "L") {
+                    camera.rotation.y += .25;
+                }
+                if (event.key === "K") {
+                    camera.rotation.x += .25;
+                }
+                if (event.key === "I") {
+                    camera.rotation.x -= .25;
+                }
+            });
         });
     </script>
 
