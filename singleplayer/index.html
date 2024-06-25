@@ -67,6 +67,14 @@
                         <div class="foreward"><button id="foreward" class="dodocontrolButton">forewards</button></div>
                         <div class="backward"><button id="backward" class="dodocontrolButton">backwards</button></div>
                     </div>
+                    <p style="margin: 0;">Rotation</p>
+                    <div class="container">
+                        <div class="home"><button id="Chome" class="dodocontrolButton">Home</button></div>
+                        <div class="up"><button id="Cup" class="dodocontrolButton">Up</button></div>
+                        <div class="left"><button id="Cleft" class="dodocontrolButton">Left</button></div>
+                        <div class="right"><button id="Cright" class="dodocontrolButton">Right</button></div>
+                        <div class="down"><button id="Cdown" class="dodocontrolButton">Down</button></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -106,7 +114,47 @@
             });
             $("#speed").on("input", function() {
                 $("#speedindicator").text($(this).val());
-            });            
+            });
+
+            $("#home").click(function () {
+                camera.position = new BABYLON.Vector3(0,0,0);
+            });
+            $("#up").click(function () {
+                camera.position.y = Math.round(camera.position.y)+1;
+            });
+            $("#left").click(function () {
+                camera.position.x = Math.round(camera.position.x)+1;
+            });
+            $("#right").click(function () {
+                camera.position.x = Math.round(camera.position.x)-1;
+            });
+            $("#down").click(function () {
+                camera.position.y = Math.round(camera.position.y)-1;
+            });
+            $("#foreward").click(function () {
+                camera.position.z = Math.round(camera.position.z)-1;
+            });
+            $("#backward").click(function () {
+                camera.position.z = Math.round(camera.position.z)+1;
+            });
+
+            // rotation
+            $("#Chome").click(function () {
+                camera.rotation = new BABYLON.Vector3(0,0,0);
+            });
+            $("#Cup").click(function () {
+                camera.rotation.x -= .25;
+            });
+            $("#Cleft").click(function () {
+                camera.rotation.y -= .25;
+            });
+            $("#Cright").click(function () {
+                camera.rotation.y += .25;
+            });
+            $("#Cdown").click(function () {
+                camera.rotation.x += .25;
+            });
+            
         });
     </script>
 
