@@ -38,6 +38,7 @@ if (!gravitytoggle.checked) {
     player.applyGravity = true;
 }
 // ...
+let follow = document.getElementById("follow");
 let spectatorMode = document.getElementById("spectatorMode");
 if (!spectatorMode.checked) {
     let rotation_offsetted = rotation + cameraRightAngle;
@@ -46,4 +47,15 @@ if (!spectatorMode.checked) {
     camera.position.y = player.position.y + cam_vertical;
     camera.rotation.y = 3.14 + rotation_offsetted;
     camera.rotation.x = cam_depression;
+}
+else if (follow.checked) {
+    camera.setTarget(player.position)
+}
+// ...
+let freeze = document.getElementById("freeze");
+if (!freeze.checked) {
+    console.log("notfrozen");
+    const positionAdjustment = window.tsTriggers.getPositionAdjustment()
+    player.position.x += positionAdjustment.x;
+    player.position.z += positionAdjustment.z;
 }
