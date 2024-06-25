@@ -1,11 +1,10 @@
 let speedtoggle = document.getElementById("speedoverwrite")
 let speedOverwrite = document.getElementById("speed");
 // ...
-let spectatorMode = document.getElementById("spectatorMode");
-    if (speedtoggle.checked) {
-        default_speed = speedOverwrite;
-        return speedOverwrite.value;
-    }
+if (speedtoggle.checked) {
+    default_speed = speedOverwrite;
+    return speedOverwrite.value;
+}
 else {
     default_speed = 0.28;
     return 0.28;
@@ -28,3 +27,12 @@ if (spinCheckbox.checked == false) {
     return false
 }
 else {return false;}
+// ... update gravity function
+let gravitytoggle = document.getElementById("gravityoverwrite")
+let gravityOverwrite = document.getElementById("gravity");
+if (!gravitytoggle.checked) {
+    scene.gravity = new BABYLON.Vector3(0, val, 0);
+    gravity = scene.gravity;
+    scene.getPhysicsEngine().setGravity(scene.gravity);
+    player.applyGravity = true;
+}
