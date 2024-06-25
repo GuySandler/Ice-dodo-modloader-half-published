@@ -5,53 +5,23 @@
     <title>Ice Dodo - Official Site</title>
     <link rel="icon" href="images/dodoloader.webp">
     <meta name="description" content="Modded Ice Dodo by Onionfist.com">
-    <style type="text/css" media="screen">
-        * {box-sizing: border-box;}
-        html {
-            background-color: black;
-            height: 100%;
-            overflow: hidden;
-        }
-        body {
-            height: 100%;
-            color:white;
-        }
-        #Menu {
-            display:inline-block;
-            overflow-y: auto;
-            width: 50vw;
-            height: calc(100vh - 15px);
-            background-color: #151515;
-            /* padding-left: 15px;
-            padding-right: 15px; */
-            box-shadow: 0px 30px 40px gray;
-            margin: 15px;
-        }
-        #playNow {
-            margin-bottom:10px;
-            width:25%;
-            border: 1px solid #4c4c4c;
-            border-radius: 10px;
-        }
-    </style>
   </head>
   <body style="font-family: ubuntu;">
     <center>    
-    <div id="Menu">
-        <div style="position:sticky;top:0;background-color: #151515;">
-            <h1 style="margin-top:15px;">DodoLoader</h1>
-            <p>Original Ice Dodo by Onionfist.com</p>
-            <p>Dodoloader by Guy</p>
-            <button id="playNow" onclick="window.location.href='singleplayer'">Play Now</button>
-        </div>
+    <div>
+        <h1>DodoLoader</h1>
+        <p>Original Ice Dodo by Onionfist.com</p>
+        <p>Dodoloader by Guy</p>
+        <button onclick="window.location.href='singleplayer'">Play Now</button>
         <form id="Cupadder">
             <h3>Add Cup</h3>
             <input type="text" id="name">
             <label for="name">Name of cup</label>
-            <br><br>
-            <input style="width:90%;margin-left:5%;margin-right:5%;" type="text" id="maps">
+            <br>
+            <input style="width:40%" type="text" id="maps">
             <label for="maps">Maps for cup<br>make sure you type it like this example:<br>[{diff:1,id:"glass_walkway",name:"Glass Walkway"},{diff:1,id:"lucid_dreams",name:"Lucid Dreams"}]<br>the diff is the difficulty that map will show as</label>
-            <br><br>
+            <br>
+            <p>RENAME CUP IMAGE TO THE NAME OF THE CUP</p>
             <input type="file" accept="image/png" id="image">
             <label for="image">Image for cup (PNG only)</label>
         </form>
@@ -103,4 +73,3 @@
     </script>
     
 </center></body></html>
-
