@@ -1,6 +1,7 @@
 let speedtoggle = document.getElementById("speedoverwrite")
 let speedOverwrite = document.getElementById("speed");
 // ...
+let spectatorMode = document.getElementById("spectatorMode");
 if (speedtoggle.checked) {
     default_speed = speedOverwrite;
     return speedOverwrite.value;
@@ -35,4 +36,14 @@ if (!gravitytoggle.checked) {
     gravity = scene.gravity;
     scene.getPhysicsEngine().setGravity(scene.gravity);
     player.applyGravity = true;
+}
+// ...
+let spectatorMode = document.getElementById("spectatorMode");
+if (!spectatorMode.checked) {
+    let rotation_offsetted = rotation + cameraRightAngle;
+    camera.position.x = player.position.x + Math.sin(rotation_offsetted) * cam_horizontal;
+    camera.position.z = player.position.z + Math.cos(rotation_offsetted) * cam_horizontal;
+    camera.position.y = player.position.y + cam_vertical;
+    camera.rotation.y = 3.14 + rotation_offsetted;
+    camera.rotation.x = cam_depression;
 }
