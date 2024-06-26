@@ -6,6 +6,15 @@ if (Addcup != null) {
         iteration++;
     }
 }
+// ...
+if (Addskin != null) {
+        for (let i of Addskin) {
+            // console.log("SkinIdEnum2[SkinIdEnum2["+i+"] = Skiniteration] = "+i);
+            SkinIdEnum2[SkinIdEnum2[i] = Skiniteration] = i;
+            customCupnum.push(Skiniteration)
+            Skiniteration++;
+        }
+    }
 /// ...
 if (cupId >= 36) {
     return "/assets/skins/"+Addskin[cupId-36]+".png";
