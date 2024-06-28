@@ -75,3 +75,7 @@ if (!freeze.checked) {
     player.position.x += positionAdjustment.x;
     player.position.z += positionAdjustment.z;
 }
+// ... fixing godmode bug
+let godmode = document.getElementById("godmode");
+if (godmode.checked) {KILLER_BOUNCE = 0}
+console.log(KILLER_BOUNCE)
