@@ -1,0 +1,3 @@
+// init function ...
+const mapScript = document.querySelector('#map-script').innerHTML;
+eval(mapScript);
