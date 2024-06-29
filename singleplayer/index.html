@@ -43,29 +43,29 @@
             <div class="modmenuOption">
                 <botton class="button" onclick="window.location.href='../'">Back To Config</botton>
                 <br>
-                <input autocomplete="off" id="spin" type="checkbox">
+                <input id="spin" type="checkbox">
                 <label>Turn Off Spin</label>
                 <br>
                 <button id="togglecheats" class="modbutton">Cheats</button>
                 <div id="cheats">
-                    <input autocomplete="off" id="godmode" type="checkbox">
+                    <input id="godmode" type="checkbox">
                     <label>Godmode</label>
                     <br>
-                    <input autocomplete="off" id="gravityoverwrite" type="checkbox">
+                    <input id="gravityoverwrite" type="checkbox">
                     <label>Overwrite Gravity?</label>
                     <br>
-                    <!-- <input autocomplete="off" id="gravity" type="number" > -->
+                    <!-- <input id="gravity" type="number" > -->
                     <div id="gravitytoggle">
-                        <input autocomplete="off" type="range" min="-18" max="0" id="gravity" step="1">
+                        <input type="range" min="-18" max="0" id="gravity" step="1">
                         <p style="display:block;margin:0;" id="gravityindicator">0</p> 
                     </div>
 
-                    <input autocomplete="off" id="speedoverwrite" type="checkbox">
+                    <input id="speedoverwrite" type="checkbox">
                     <label>Overwrite speed?</label>
                     <br>
-                    <!-- <input autocomplete="off" id="speed" type="number" > -->
+                    <!-- <input id="speed" type="number" > -->
                     <div id="speedtoggle">
-                        <input autocomplete="off" type="range" min="0" max="1" id="speed" step=".02">
+                        <input type="range" min="0" max="1" id="speed" step=".02">
                         <p style="display:block;margin:0;" id="speedindicator">0.28</p>
                     </div>
                     <botton class="button" onclick="window.tsTriggers.onWin()">Instant Win</botton>
@@ -73,13 +73,13 @@
                 <button id="toggledodocontrols" class="modbutton">Dodo Cinematics</button>
                 <!-- <button id="testbutton" class="modbutton">Dodo rotation</button> -->
                 <div id="dodocontrols">
-                    <input autocomplete="off" id="freecam" type="checkbox">
+                    <input id="freecam" type="checkbox">
                     <label>FreeCam</label>
                     <br>
-                    <input autocomplete="off" id="freeze" type="checkbox" >
+                    <input id="freeze" type="checkbox" >
                     <label >Freeze Dodo</label>
                     <br >
-                    <input autocomplete="off" id="follow" type="checkbox" >
+                    <input id="follow" type="checkbox" >
                     <label >Follow Player</label>
                     <br >
                     <p style="margin: 0;">Movement</p>
@@ -111,20 +111,23 @@
                 <button id="toggleLevelEditorObjects" class="modbutton">LevelEditor Objects</button>
                 <div class="LevelEditorObjects" style="max-height:25vh;overflow-y: auto;">
                     <button class="button" id="GetAllObjects">get All Objects</button>
+                    <button class="button" id="DeleteAllMadeObjects">Delete All (made) Objects</button>
+                    <br>
                     <select id="ObjectSelector"><option> </option></select>
                 </div>
                 <button id="toggleLevelEditorAdd" class="modbutton">LevelEditor Add</button>
                 <div class="LevelEditorAdd">
-                    <button id="addBox" class="button">add box</button>
+                    <button id="addBox" class="button">add box</button><br>
+                    <button id="addTorus" class="button">add torus</button>
                 </div>
                 <button id="toggleLevelEditorControl" class="modbutton">LevelEditor Control</button>
                 <div class="LevelEditorControl">
                     <p>Position</p>
-                    <input autocomplete="off" type="text" id="x"><input autocomplete="off" type="text" id="y"><input autocomplete="off" type="text" id="z">
+                    <input type="text" id="x"><input type="text" id="y"><input type="text" id="z">
                     <p>Rotation</p>
-                    <input autocomplete="off" type="text" id="xr"><input autocomplete="off" type="text" id="yr"><input autocomplete="off" type="text" id="zr">
+                    <input type="text" id="xr"><input type="text" id="yr"><input type="text" id="zr">
                     <p>Scale</p>
-                    <input autocomplete="off" type="text" id="xs"><input autocomplete="off" type="text" id="ys"><input autocomplete="off" type="text" id="zs">
+                    <input type="text" id="xs"><input type="text" id="ys"><input type="text" id="zs">
                     <br>
                     <button class="button" id="ControlButton">Set</button>
                 </div>
@@ -152,10 +155,13 @@
                 physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 1, friction: 0.1}, scene)
             })
 
+            let lasthighlight;
             $("#ObjectSelector").on("input", function() {
+                lasthighlight = $(this).val();
                 meshes[$(this).val()].renderOutline = true;
                 meshes[$(this).val()].outlineColor = new BABYLON.Color3(0, 1, 0);
                 meshes[$(this).val()].outlineWidth = 0.1;
+                meshes[lasthighlight].renderOutline = false;
             });
 
             let meshes;
@@ -170,12 +176,53 @@
                     document.getElementById("ObjectSelector").innerHTML += "<option value="+i+">"+meshes[i].name+"</option>"
                 }
             })
+            $("#DeleteAllMadeObjects").click(function(){
+                for(let i = 0;i < boxnum;i++) {
+                    scene.getMeshByName("box"+i).dispose()
+                }
+                boxnum = 0;
+            })
             let boxnum = 0
+            let torusnum = 0
             $("#addBox").click(function() {
+                // texture
+                let mat = new BABYLON.StandardMaterial("mat", scene);
+                mat.diffuseTexture = new BABYLON.Texture("assets/textures/bright.png", scene);
+                mat.diffuseTexture.uScale = mat.diffuseTexture.vScale = 1.0;
+                mat.backFaceCulling = false;
+                mat.freeze();
+
                 let box = BABYLON.MeshBuilder.CreateBox("box"+boxnum, options={size:2}, scene);
-                BABYLON.Tags.AddTagsTo(box, "mesh");
                 box.checkCollisions = true;
+                box.applyGravity = false;
+                box.isPickable = false;
+                scene.collisionsEnabled = true;
+                camera.checkCollisions = true;
+                BABYLON.Tags.AddTagsTo(box, "mesh");
+                box.physicsImpostor = new BABYLON.PhysicsImpostor(box, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0, friction: 0.6}, scene)
+                box.material = mat;
+                
                 boxnum++
+            })
+            $("#addTorus").click(function() {
+                // texture
+                let mat = new BABYLON.StandardMaterial("mat", scene);
+                mat.diffuseTexture = new BABYLON.Texture("assets/textures/bright.png", scene);
+                mat.diffuseTexture.uScale = mat.diffuseTexture.vScale = 1.0;
+                mat.backFaceCulling = false;
+                mat.freeze();
+
+                let torus = BABYLON.MeshBuilder.CreateTorus("torus"+torusnum, options={diameter:2, thickness: 4}, scene);
+                torus.checkCollisions = true;
+                torus.applyGravity = false;
+                torus.isPickable = false;
+                scene.collisionsEnabled = true;
+                camera.checkCollisions = true;
+                BABYLON.Tags.AddTagsTo(torus, "mesh");
+                torus.physicsImpostor = new BABYLON.PhysicsImpostor(torus, BABYLON.PhysicsImpostor.CustomImpostor, { mass: 0, restitution: 0, friction: 0.6}, scene)
+                torus.material = mat;
+                
+                torusnum++
             })
             $("#ControlButton").click(function() {
                 try{meshes[$("#ObjectSelector").val()].position = new BABYLON.Vector3($("#x").val(),$("#y").val(),$("#z").val())} catch{}
