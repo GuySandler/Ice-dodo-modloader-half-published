@@ -13,8 +13,8 @@
     <link rel="stylesheet" href="/assets/index.css">
     <style>
         .button {
-            margin-bottom:10px;
-            margin-top:10px;
+            margin-bottom:5px;
+            margin-top:5px;
             border: 4px solid #bbbbbb;
             border-radius: 10px;
             background-color: transparent;
@@ -110,15 +110,16 @@
             <div class="LevelEditorOption">
                 <button id="toggleLevelEditorObjects" class="modbutton">LevelEditor Objects</button>
                 <div class="LevelEditorObjects" style="max-height:25vh;overflow-y: auto;">
-                    <button class="button" id="GetAllObjects">get All Objects</button>
+                    <button class="button" id="GetAllObjects">get All Objects (emergency)</button>
                     <button class="button" id="DeleteAllMadeObjects">Delete All (made) Objects</button>
+                    <button class="button" id="DeleteSelectedMadeObjects">Delete Selected Object</button>
                     <br>
                     <select id="ObjectSelector"><option> </option></select>
                 </div>
                 <button id="toggleLevelEditorAdd" class="modbutton">LevelEditor Add</button>
                 <div class="LevelEditorAdd">
                     <button id="addBox" class="button">add box</button><br>
-                    <button id="addTorus" class="button">add torus</button>
+                    <button id="addcylinder" class="button">add cylinder</button>
                 </div>
                 <button id="toggleLevelEditorControl" class="modbutton">LevelEditor Control</button>
                 <div class="LevelEditorControl">
@@ -130,6 +131,9 @@
                     <input type="text" id="xs"><input type="text" id="ys"><input type="text" id="zs">
                     <br>
                     <button class="button" id="ControlButton">Set</button>
+                    <br>
+                    <button class="button" id="Export">Export Level</button>
+                    <textarea style="color:black;font-size: xx-small;font-family: arial;" id="ExportMap"></textarea>
                 </div>
             </div>
         </div>
@@ -157,33 +161,43 @@
 
             let lasthighlight;
             $("#ObjectSelector").on("input", function() {
+                console.log($(this).val(), lasthighlight)
+                try{meshes[lasthighlight].showBoundingBox = false;}catch{}
                 lasthighlight = $(this).val();
-                meshes[$(this).val()].renderOutline = true;
-                meshes[$(this).val()].outlineColor = new BABYLON.Color3(0, 1, 0);
-                meshes[$(this).val()].outlineWidth = 0.1;
-                meshes[lasthighlight].renderOutline = false;
+                meshes[$(this).val()].showBoundingBox = true;
             });
 
             let meshes;
             // gotta add unselector
-            $("#GetAllObjects").click(function() {
+            function GetAllObjects() {
                 meshes = null;
                 document.getElementById("ObjectSelector").innerHTML = "<option> </option>";
                 meshes = scene.getMeshesByTags("mesh")
                 console.log(meshes.length)
                 for(let i = 0;i < meshes.length;i++) {
-                    console.log(meshes[i])
                     document.getElementById("ObjectSelector").innerHTML += "<option value="+i+">"+meshes[i].name+"</option>"
                 }
+            }
+            $("#GetAllObjects").click(function() {
+                GetAllObjects();
             })
             $("#DeleteAllMadeObjects").click(function(){
                 for(let i = 0;i < boxnum;i++) {
                     scene.getMeshByName("box"+i).dispose()
                 }
+                for(let i = 0;i < cylindernum;i++) {
+                    scene.getMeshByName("box"+i).dispose()
+                }
                 boxnum = 0;
+                cylindernum = 0;
+                GetAllObjects()
+            })
+            $("#DeleteSelectedMadeObjects").click(function(){
+                meshes[$("#ObjectSelector").val()].dispose();
+                GetAllObjects()
             })
             let boxnum = 0
-            let torusnum = 0
+            let cylindernum = 0
             $("#addBox").click(function() {
                 // texture
                 let mat = new BABYLON.StandardMaterial("mat", scene);
@@ -203,8 +217,9 @@
                 box.material = mat;
                 
                 boxnum++
+                GetAllObjects()
             })
-            $("#addTorus").click(function() {
+            $("#addcylinder").click(function() {
                 // texture
                 let mat = new BABYLON.StandardMaterial("mat", scene);
                 mat.diffuseTexture = new BABYLON.Texture("assets/textures/bright.png", scene);
@@ -212,24 +227,57 @@
                 mat.backFaceCulling = false;
                 mat.freeze();
 
-                let torus = BABYLON.MeshBuilder.CreateTorus("torus"+torusnum, options={diameter:2, thickness: 4}, scene);
-                torus.checkCollisions = true;
-                torus.applyGravity = false;
-                torus.isPickable = false;
+                let cylinder = BABYLON.MeshBuilder.CreateCylinder("cylinder"+cylindernum, options={height:2}, scene);
+                cylinder.checkCollisions = true;
+                cylinder.applyGravity = false;
+                cylinder.isPickable = false;
                 scene.collisionsEnabled = true;
                 camera.checkCollisions = true;
-                BABYLON.Tags.AddTagsTo(torus, "mesh");
-                torus.physicsImpostor = new BABYLON.PhysicsImpostor(torus, BABYLON.PhysicsImpostor.CustomImpostor, { mass: 0, restitution: 0, friction: 0.6}, scene)
-                torus.material = mat;
+                BABYLON.Tags.AddTagsTo(cylinder, "mesh");
+                cylinder.physicsImpostor = new BABYLON.PhysicsImpostor(cylinder, BABYLON.PhysicsImpostor.CylinderImpostor, { mass: 0, restitution: 0, friction: 0.6}, scene)
+                cylinder.material = mat;
                 
-                torusnum++
+                cylindernum++
+                GetAllObjects()
             })
+            function Transform(x=0,y=0,z=0,xr=0,yr=0,zr=0,xs=1,ys=1,zs=1) {
+                console.log(x, y, z)
+                try{meshes[$("#ObjectSelector").val()].position = new BABYLON.Vector3(x,y,z)} catch{}
+                try{meshes[$("#ObjectSelector").val()].rotation = new BABYLON.Vector3(xr,yr,zr)} catch{}
+                try{meshes[$("#ObjectSelector").val()].scaling = new BABYLON.Vector3(xs,ys,zs)} catch{}
+            }
             $("#ControlButton").click(function() {
-                try{meshes[$("#ObjectSelector").val()].position = new BABYLON.Vector3($("#x").val(),$("#y").val(),$("#z").val())} catch{}
-                try{meshes[$("#ObjectSelector").val()].rotation = new BABYLON.Vector3($("#xr").val(),$("#yr").val(),$("#zr").val())} catch{}
-                try{meshes[$("#ObjectSelector").val()].scaling = new BABYLON.Vector3($("#xs").val(),$("#ys").val(),$("#zs").val())} catch{}
+                Transform(
+                    $("#x").val() !== "" ? $("#x").val() : undefined,$("#y").val() !== "" ? $("#y").val() : undefined,$("#z").val() !== "" ? $("#z").val() : undefined,
+                    $("#xr").val() !== "" ? $("#xr").val() : undefined,$("#yr").val() !== "" ? $("#yr").val() : undefined,$("#zr").val() !== "" ? $("#zr").val() : undefined,
+                    $("#xs").val() !== "" ? $("#xs").val() : undefined,$("#ys").val() !== "" ? $("#ys").val() : undefined,$("#zs").val() !== "" ? $("#zs").val() : undefined)
             })
-            
+            const MapScript1 = 'var map = {title: "EngineV9Level",song: "env2",maker: "Someone",spawn: [0, 0.5, 0],init: function() {let box;' // don't forget to close brackets with , + stick a loop that adds collition
+            const MapScirpt2 = 'post: function() {},section_id: 0,section_update: function() {},reset: function() {' // don't forget to close brackets with ,
+            const MapScirpt3 = 'player_move: function() {},physics_update: function() {},render_update: function() {},}'
+            let MapInit = [];
+            function ExportMap() {
+                GetAllObjects();
+                console.log(meshes[0].getBoundingInfo().boundingBox)
+                for(let i = 0;i < meshes.length;i++) {
+                    let boundingBox = meshes[i].getBoundingInfo().boundingBox;
+                    let minCorner = boundingBox.minimumWorld;
+                    let maxCorner = boundingBox.maximumWorld;
+                    let width = Math.abs(maxCorner.x-minCorner.x)/2
+                    let height = Math.abs(maxCorner.y-minCorner.x)/2
+                    let depth = Math.abs(maxCorner.z-minCorner.z)/2
+                    console.log(width, height*2+.25, depth)
+                            // a.p([0, -1.0, 0], [0, 0, 0], [2.5, 1.0, 2.5], 0, 0);
+                            // a.re('P0', [0, -1.0, 0], [0, 0, 0], [2.5, 1.0, 2.5]);
+                    MapInit.push("box = BABYLON.MeshBuilder.CreateBox('"+meshes[i].name+"', options={size:1}, scene);box.scaling = new BABYLON.Vector3("+width*2+","+(height*2+.25)+","+depth*2+");box.position = new BABYLON.Vector3("+(maxCorner.x-width)+","+(maxCorner.y-height-.125)+","+(maxCorner.z-depth)+");box.rotation = new BABYLON.Vector3("+meshes[i].rotation.x+","+meshes[i].rotation.y+","+meshes[i].rotation.z+");BABYLON.Tags.AddTagsTo(box, 'mesh');")
+                    eval(MapInit[i])
+                }
+                console.log(MapInit)
+            }
+            $("#Export").click(function(){
+                $("#ExportMap").val(ExportMap());
+            })
+
             $('#gravity').val('-9');
             $('#speed').val('0.28');
             $("#speedindicator").text($("#speed").val());
