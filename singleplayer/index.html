@@ -141,15 +141,15 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $(".modmenuOption").hide();
-            $(".LevelEditorOption").hide();
-            $(".LevelEditorObjects").hide();
-            $(".LevelEditorControl").hide();
-            $(".LevelEditorAdd").hide();
+            // $(".modmenuOption").hide();
+            // $(".LevelEditorOption").hide();
+            // $(".LevelEditorObjects").hide();
+            // $(".LevelEditorControl").hide();
+            // $(".LevelEditorAdd").hide();
             $("#cheats").hide();
             $("#gravitytoggle").hide();
             $("#speedtoggle").hide();
-            $("#dodocontrols").hide();
+            // $("#dodocontrols").hide();
 
             $("#testbutton").click(function() {
                 sphere = BABYLON.MeshBuilder.CreateIcoSphere("icosphere", options = {radius: 3, subdivisions: 4}, scene);
@@ -161,7 +161,6 @@
 
             let lasthighlight;
             $("#ObjectSelector").on("input", function() {
-                console.log($(this).val(), lasthighlight)
                 try{meshes[lasthighlight].showBoundingBox = false;}catch{}
                 lasthighlight = $(this).val();
                 meshes[$(this).val()].showBoundingBox = true;
@@ -173,7 +172,6 @@
                 meshes = null;
                 document.getElementById("ObjectSelector").innerHTML = "<option> </option>";
                 meshes = scene.getMeshesByTags("mesh")
-                console.log(meshes.length)
                 for(let i = 0;i < meshes.length;i++) {
                     document.getElementById("ObjectSelector").innerHTML += "<option value="+i+">"+meshes[i].name+"</option>"
                 }
@@ -240,8 +238,9 @@
                 cylindernum++
                 GetAllObjects()
             })
-            function Transform(x=0,y=0,z=0,xr=0,yr=0,zr=0,xs=1,ys=1,zs=1) {
-                console.log(x, y, z)
+            function Transform(x=meshes[$("#ObjectSelector").val()].position.x,y=meshes[$("#ObjectSelector").val()].position.y,z=meshes[$("#ObjectSelector").val()].position.z,
+                               xr=meshes[$("#ObjectSelector").val()].rotation.x,yr=meshes[$("#ObjectSelector").val()].rotation.y,zr=meshes[$("#ObjectSelector").val()].rotation.z,
+                               xs=meshes[$("#ObjectSelector").val()].scaling.x,ys=meshes[$("#ObjectSelector").val()].scaling.y,zs=meshes[$("#ObjectSelector").val()].scaling.z) {
                 try{meshes[$("#ObjectSelector").val()].position = new BABYLON.Vector3(x,y,z)} catch{}
                 try{meshes[$("#ObjectSelector").val()].rotation = new BABYLON.Vector3(xr,yr,zr)} catch{}
                 try{meshes[$("#ObjectSelector").val()].scaling = new BABYLON.Vector3(xs,ys,zs)} catch{}
@@ -256,23 +255,65 @@
             const MapScirpt2 = 'post: function() {},section_id: 0,section_update: function() {},reset: function() {' // don't forget to close brackets with ,
             const MapScirpt3 = 'player_move: function() {},physics_update: function() {},render_update: function() {},}'
             let MapInit = [];
+            function Distance3D(x1, y1, z1, x2, y2, z2) {
+                return Math.sqrt(
+                    Math.abs(Math.pow(x2 - x1, 2)) + 
+                    Math.abs(Math.pow(y2 - y1, 2)) + 
+                    Math.abs(Math.pow(z2 - z1, 2))
+                );
+            }
             function ExportMap() {
                 GetAllObjects();
-                console.log(meshes[0].getBoundingInfo().boundingBox)
-                for(let i = 0;i < meshes.length;i++) {
-                    let boundingBox = meshes[i].getBoundingInfo().boundingBox;
-                    let minCorner = boundingBox.minimumWorld;
-                    let maxCorner = boundingBox.maximumWorld;
-                    let width = Math.abs(maxCorner.x-minCorner.x)/2
-                    let height = Math.abs(maxCorner.y-minCorner.x)/2
-                    let depth = Math.abs(maxCorner.z-minCorner.z)/2
-                    console.log(width, height*2+.25, depth)
-                            // a.p([0, -1.0, 0], [0, 0, 0], [2.5, 1.0, 2.5], 0, 0);
-                            // a.re('P0', [0, -1.0, 0], [0, 0, 0], [2.5, 1.0, 2.5]);
-                    MapInit.push("box = BABYLON.MeshBuilder.CreateBox('"+meshes[i].name+"', options={size:1}, scene);box.scaling = new BABYLON.Vector3("+width*2+","+(height*2+.25)+","+depth*2+");box.position = new BABYLON.Vector3("+(maxCorner.x-width)+","+(maxCorner.y-height-.125)+","+(maxCorner.z-depth)+");box.rotation = new BABYLON.Vector3("+meshes[i].rotation.x+","+meshes[i].rotation.y+","+meshes[i].rotation.z+");BABYLON.Tags.AddTagsTo(box, 'mesh');")
+                meshes[1].freezeWorldMatrix(meshes[1].getWorldMatrix());
+                console.log(meshes[1].rotationQuaternion)
+                // meshes[1].rotation = new BABYLON.Vector3(0.5, 1, 1.5);
+
+                // Get current rotation
+                var currentRotation = meshes[1].rotation;
+
+                console.log("X rotation:", currentRotation.x);
+                console.log("Y rotation:", currentRotation.y);
+                console.log("Z rotation:", currentRotation.z);
+                // corners 0 5
+                // width 0 1
+                // height 0 3
+                // let debugMesh = BABYLON.MeshBuilder.CreateBox("debug", { size: 0.1 }, scene)
+                // debugMesh.position = new BABYLON.Vector3(verticies[0].x,verticies[0].y,verticies[0].z)
+                // debugMesh = BABYLON.MeshBuilder.CreateBox("debug", { size: 0.1 }, scene)
+                // debugMesh.position = new BABYLON.Vector3(verticies[7].x,verticies[7].y,verticies[7].z)
+                let verticies = []
+                let verticieIndex = 0
+                for(let i = 0;i < 2;i++) {
+                    let data = BABYLON.VertexData.ExtractFromMesh(meshes[i])
+                    meshes[i].computeWorldMatrix(true)
+                    data.transform(meshes[i].getWorldMatrix())
+                    verticies = []
+                    verticieIndex = 0
+                    for (let i = 0; i < data.positions.length; i += 3) {
+                        // let debugMesh = BABYLON.MeshBuilder.CreateBox("debug", { size: 0.1 }, scene)
+                        let x = data.positions[i + 0]
+                        let y = data.positions[i + 1]
+                        let z = data.positions[i + 2]
+                        // debugMesh.position = new BABYLON.Vector3(x,y,z);
+                        verticies.push(new BABYLON.Vector3(x,y,z));
+                        if (verticieIndex == 9) {break}
+                        verticieIndex++
+                    }
+                    let boundingBox = meshes[i].getBoundingInfo().boundingBox
+                    let center = boundingBox.center
+                    // let extentsize = boundingBox.extendSize
+                    // let minCorner = boundingBox.minimumWorld;
+                    // let maxCorner = boundingBox.maximumWorld;
+                    // let width = Math.abs(verticies[5].x-verticies[0].x)
+                    let width = Distance3D(verticies[0].x,verticies[0].y,verticies[0].z,verticies[1].x,verticies[1].y,verticies[1].z)
+                    let height = Distance3D(verticies[0].x,verticies[0].y,verticies[0].z,verticies[3].x,verticies[3].y,verticies[3].z)
+                    let depth = Distance3D(verticies[0].x,verticies[0].y,verticies[0].z,verticies[7].x,verticies[7].y,verticies[7].z)
+                    MapInit.push("box = BABYLON.MeshBuilder.CreateBox('"+meshes[i].name+"', options={size:1}, scene);box.scaling = new BABYLON.Vector3("+width+","+height+","+depth+");box.position = new BABYLON.Vector3("+center.x+","+center.y+","+center.z+");box.rotation = new BABYLON.Vector3("+meshes[i].rotationQuaternion.x+","+meshes[i].rotationQuaternion.y+","+meshes[i].rotationQuaternion.z+");BABYLON.Tags.AddTagsTo(box, 'mesh');")
                     eval(MapInit[i])
+                    
+                    // console.log(meshes[0].rotationQuaternion)
+                    // console.log(meshes[i].rotationQuaternion.x,meshes[i].rotationQuaternion.y,meshes[i].rotationQuaternion.z)
                 }
-                console.log(MapInit)
             }
             $("#Export").click(function(){
                 $("#ExportMap").val(ExportMap());
