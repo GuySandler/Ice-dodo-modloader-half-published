@@ -69,7 +69,8 @@ else if (follow.checked) {
 }
 // ...
 let freeze = document.getElementById("freeze");
-if (!freeze.checked) {
+if (window.platformermode) {}
+else if (freeze.checked == false) {
     console.log("notfrozen");
     const positionAdjustment = window.tsTriggers.getPositionAdjustment()
     player.position.x += positionAdjustment.x;
@@ -79,3 +80,20 @@ if (!freeze.checked) {
 let godmode = document.getElementById("godmode");
 if (godmode.checked) {KILLER_BOUNCE = 0}
 console.log(KILLER_BOUNCE)
+
+window.tsTriggers.setPlatformerSignVisibility(window.platformermode);
+
+//...
+if (window.platformermode) {const positionAdjustment = window.tsTriggers.getPositionAdjustment()
+    player.position.x -= positionAdjustment.z;
+    player.position.z += positionAdjustment.x;break}
+if (window.platformermode) {const positionAdjustment = window.tsTriggers.getPositionAdjustment()
+    player.position.x += positionAdjustment.z;
+    player.position.z -= positionAdjustment.x;break}
+if (window.platformermode) {const positionAdjustment = window.tsTriggers.getPositionAdjustment()
+    player.position.x -= positionAdjustment.x;
+    player.position.z -= positionAdjustment.z;break}
+if (window.platformermode) {const positionAdjustment = window.tsTriggers.getPositionAdjustment()
+    player.position.x += positionAdjustment.x;
+    player.position.z += positionAdjustment.y;break}
+if (window.platformermode) {flyjump.jump()}
