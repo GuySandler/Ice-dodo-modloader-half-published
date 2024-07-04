@@ -20,7 +20,7 @@ else {
 }
 
 // ...
-decorateCustomLevel: function(meshes, platforms, cones, ends) {
+decorateCustomLevel: function(meshes, platforms, cones, ends, TextureName, TextureColor) {
     // let meshes = scene.getMeshesByTags("mesh");
     // let platforms = scene.getMeshesByTags("platform");
     // let cones = scene.getMeshesByTags("cone");
@@ -32,13 +32,16 @@ decorateCustomLevel: function(meshes, platforms, cones, ends) {
     pmat.backFaceCulling = false;
     pmat.freeze();
 
-    for(let i = 0;i<platforms.length;i++){
-        platforms[i].material = pmat;
-    }
-    for(let i = 0;i<cones.length;i++){
-        cones[i].material = this.rgba_mat(235,50,50,1.0);
-    }
-    for(let i = 0;i<ends.length;i++){
-        ends[i].material = this.rgba_mat(0, 240, 0, 0.8);
+    // for(let i = 0;i<platforms.length;i++){
+    //     platforms[i].material = pmat;
+    // }
+    // for(let i = 0;i<cones.length;i++){
+    //     cones[i].material = this.rgba_mat(235,50,50,1.0);
+    // }
+    // for(let i = 0;i<ends.length;i++){
+    //     ends[i].material = this.rgba_mat(0, 240, 0, 0.8);
+    // }
+    for (let i=0;i<meshes.length;i++) {
+        meshes[i].material = TextureName[i];
     }
 }

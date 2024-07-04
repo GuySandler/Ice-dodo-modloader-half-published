@@ -149,7 +149,6 @@
                             <option value="icedd.png">Icedd</option>
                             <option value="pm1.png">PM1</option>
                             <option value="pm2.png">PM2</option>
-                            <option value="skybox.jpg">skybox</option>
                         </select>
                     <br>
                     <button class="button" id="ControlButton">Set</button>
@@ -187,6 +186,7 @@
                 try{meshes[lasthighlight].showBoundingBox = false;}catch{}
                 lasthighlight = $(this).val();
                 meshes[$(this).val()].showBoundingBox = true;
+                console.log(meshes[$(this).val()].material)
             });
 
             let meshes;
@@ -195,6 +195,8 @@
             let spheres;
             let ends;
             let cylinders;
+            let TextureName = [];
+            let TextureColor = [];
             // gotta add unselector
             function GetAllObjects() {
                 meshes = null;
@@ -213,12 +215,12 @@
                 for(let i = 0;i < meshes.length;i++) {
                     document.getElementById("ObjectSelector").innerHTML += "<option value="+i+">"+meshes[i].name+"</option>"
                 }
-                // console.log(meshes.length, platforms.len)
-                // console.log("platforms: "+platforms)
-                // console.log("spheres: "+spheres)
-                // console.log("ends: "+ends)
-                // console.log("cones: "+cones)
-                // console.log("cylinders: "+cylinders)
+                for (let i = 0;i<meshes.length;i++){
+                    TextureName.push(meshes[i].material.name);
+                    TextureColor.push(meshes[i].material.diffuseColor);
+                }
+                TextureName = JSON.stringify(TextureName)
+                TextureColor = JSON.stringify(TextureColor)
             }
             $("#GetAllObjects").click(function() {
                 GetAllObjects();
@@ -289,6 +291,13 @@
                     meshes[$("#ObjectSelector").val()].rotationQuaternion = combinedRotation;
                 } catch{}
                 try{meshes[$("#ObjectSelector").val()].scaling = new BABYLON.Vector3(xs,ys,zs)} catch{}
+                if ($("#TextureSelector").val() == ''){}
+                else if ($("#TextureSelector").val() == 'bright.png'){meshes[$("#ObjectSelector").val()].material = decorations.bright}
+                else if ($("#TextureSelector").val() == 'dark.png'){meshes[$("#ObjectSelector").val()].material = decorations.dark}
+                else if ($("#TextureSelector").val() == 'flare.png'){meshes[$("#ObjectSelector").val()].material = decorations.flare}
+                else if ($("#TextureSelector").val() == 'icedd.png'){meshes[$("#ObjectSelector").val()].material = decorations.icedd}
+                else if ($("#TextureSelector").val() == 'pm1.png'){meshes[$("#ObjectSelector").val()].material = decorations.pm1}
+                else if ($("#TextureSelector").val() == 'pm2.png'){meshes[$("#ObjectSelector").val()].material = decorations.pm2}
             }
             $("#ControlButton").click(function() {
                 Transform(
@@ -296,10 +305,6 @@
                     $("#xr").val() !== "" ? $("#xr").val() : undefined,$("#yr").val() !== "" ? $("#yr").val() : undefined,$("#zr").val() !== "" ? $("#zr").val() : undefined,
                     $("#xs").val() !== "" ? $("#xs").val() : undefined,$("#ys").val() !== "" ? $("#ys").val() : undefined,$("#zs").val() !== "" ? $("#zs").val() : undefined)
             })
-            const MapScript1 = 'var map = {title: "EngineV9Level",song: "env2",maker: "Someone",spawn: [0, 0.5, 0],init: function() {let box;';
-            const MapScirpt2 = 'let meshes = scene.getMeshesByTags("mesh");let platforms = scene.getMeshesByTags("platform");let cones = scene.getMeshesByTags("cone");let ends = scene.getMeshesByTags("end");decorations.decorateCustomLevel(meshes, platforms, cones, ends)},'
-            const MapScirpt3 = 'post: function() {},section_id: 0,section_update: function() {},reset: function() {},'
-            const MapScirpt4 = 'player_move: function() {},physics_update: function() {},render_update: function() {},}'
             let MapInit = '';
             function Distance3D(x1, y1, z1, x2, y2, z2) {
                 return Math.sqrt(
@@ -308,12 +313,20 @@
                     Math.abs(Math.pow(z2 - z1, 2))
                 );
             }
+            let MapScript1;
+            let MapScirpt2;
+            let MapScirpt3;
+            let MapScirpt4;
             // let debugmesh = BABYLON.MeshBuilder.CreateBox("box", options={size: 0.1}, scene);
             // debugmesh.position = new BABYLON.Vector3(vertices[0].x, vertices[0].y, vertices[0].z)
             // debugmesh = BABYLON.MeshBuilder.CreateBox("box", options={size: 0.1}, scene);
             // debugmesh.position = new BABYLON.Vector3(vertices[4].x, vertices[4].y, vertices[4].z)
             function ExportMap() {
                 GetAllObjects();
+                MapScript1 = 'var map = {title: "EngineV9Level",song: "env2",maker: "Someone",spawn: [0, 0.5, 0],init: function() {let box;';
+                MapScirpt2 = `let meshes = scene.getMeshesByTags("mesh");let platforms = scene.getMeshesByTags("platform");let cones = scene.getMeshesByTags("cone");let ends = scene.getMeshesByTags("end");decorations.decorateCustomLevel(meshes, platforms, cones, ends, ${TextureName}, ${TextureColor})},`
+                MapScirpt3 = 'post: function() {},section_id: 0,section_update: function() {},reset: function() {},'
+                MapScirpt4 = 'player_move: function() {},physics_update: function() {},render_update: function() {},}'
                 for (let i = 0; i < platforms.length; i++) {
                     platforms[i].computeWorldMatrix(true);
                     let worldMatrix = platforms[i].getWorldMatrix();
@@ -407,10 +420,10 @@
                                         BABYLON.Tags.AddTagsTo(end, 'mesh end');`;
                 }
                 eval(MapInit)
-                return MapInit
+                return MapScript1+MapInit+MapScirpt2+MapScirpt3+MapScirpt4
             }
             $("#Export").click(function(){
-                const script = MapScript1+ExportMap()+MapScirpt2+MapScirpt3+MapScirpt4
+                const script = ExportMap();
                 $("#ExportMap").val(script);
             })
 
