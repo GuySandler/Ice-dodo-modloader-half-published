@@ -21,27 +21,25 @@ else {
 
 // ...
 decorateCustomLevel: function(meshes, platforms, cones, ends, TextureName, TextureColor) {
+    console.log(TextureName)
+    console.log(TextureColor)
     // let meshes = scene.getMeshesByTags("mesh");
     // let platforms = scene.getMeshesByTags("platform");
     // let cones = scene.getMeshesByTags("cone");
     // let ends = scene.getMeshesByTags("end");
-
-    let pmat = new BABYLON.StandardMaterial("pmat", scene);
-    pmat.diffuseTexture = new BABYLON.Texture("assets/textures/bright.png", scene);
-    pmat.diffuseTexture.uScale = pmat.diffuseTexture.vScale = 1.0;
-    pmat.backFaceCulling = false;
-    pmat.freeze();
-
-    // for(let i = 0;i<platforms.length;i++){
-    //     platforms[i].material = pmat;
-    // }
-    // for(let i = 0;i<cones.length;i++){
-    //     cones[i].material = this.rgba_mat(235,50,50,1.0);
-    // }
-    // for(let i = 0;i<ends.length;i++){
-    //     ends[i].material = this.rgba_mat(0, 240, 0, 0.8);
-    // }
     for (let i=0;i<meshes.length;i++) {
-        meshes[i].material = TextureName[i];
+        if (BABYLON.Tags.MatchesQuery(meshes[i], "end")) {meshes[i].material = decorations.rgba_mat(0,230,0,0.75, true)}
+        else if (BABYLON.Tags.MatchesQuery(meshes[i], "cone")) {meshes[i].material = decorations.rgba_mat(235,50,50,1.0)}
+        // if (TextureName[i].slice(0, 3) == "mat") {
+        //     else {meshes[i].material = decorations.rgba_mat(TextureColor[i].r*255,TextureColor[i].r*255,TextureColor[i].r*255,1.0)}
+        // }
+        else {
+            if (TextureName[i] == 'darkmat'){meshes[i].material = decorations.dark}
+            else if (TextureName[i] == 'flaremat'){meshes[i].material = decorations.flare}
+            else if (TextureName[i] == 'iceddmat'){meshes[i].material = decorations.icedd}
+            else if (TextureName[i] == 'pm1mat'){meshes[i].material = decorations.pm1}
+            else if (TextureName[i] == 'pm2mat'){meshes[i].material = decorations.pm2}
+            else{meshes[i].material = decorations.bright}
+        }
     }
 }
