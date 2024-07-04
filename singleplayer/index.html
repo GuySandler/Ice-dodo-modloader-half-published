@@ -149,6 +149,7 @@
         </div>
     </div>
 
+    <script type="text/javascript" src="/scripts/decorations.js?v=0.179"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             $(".modmenuOption").hide();
@@ -277,8 +278,8 @@
                     $("#xr").val() !== "" ? $("#xr").val() : undefined,$("#yr").val() !== "" ? $("#yr").val() : undefined,$("#zr").val() !== "" ? $("#zr").val() : undefined,
                     $("#xs").val() !== "" ? $("#xs").val() : undefined,$("#ys").val() !== "" ? $("#ys").val() : undefined,$("#zs").val() !== "" ? $("#zs").val() : undefined)
             })
-            const MapScript1 = 'var map = {title: "EngineV9Level",song: "env2",maker: "Someone",spawn: [0, 0.5, 0],init: function() {let box;let mat = new BABYLON.StandardMaterial("mat", scene);mat.diffuseTexture = new BABYLON.Texture("assets/textures/bright.png", scene);mat.diffuseTexture.uScale = mat.diffuseTexture.vScale = 1.0;mat.backFaceCulling = false;mat.freeze();let conemat = new BABYLON.StandardMaterial("conemat", scene);conemat.diffuseColor = new BABYLON.Color3.FromInts(235, 50, 50);conemat.alpha = 1.0;;conemat.freeze();';
-            const MapScirpt2 = 'let meshes = scene.getMeshesByTags("mesh");let platforms = scene.getMeshesByTags("platform");let cones = scene.getMeshesByTags("cone");for (let i = 0; i < platforms.length; i++){platforms[i].material = mat;}for (let i = 0; i < cones.length; i++){cones[i].material = conemat;}},'
+            const MapScript1 = 'var map = {title: "EngineV9Level",song: "env2",maker: "Someone",spawn: [0, 0.5, 0],init: function() {let box;';
+            const MapScirpt2 = 'let meshes = scene.getMeshesByTags("mesh");let platforms = scene.getMeshesByTags("platform");let cones = scene.getMeshesByTags("cone");let ends = scene.getMeshesByTags("end");decorations.decorateCustomLevel(meshes, platforms, cones, ends)},'
             const MapScirpt3 = 'post: function() {},section_id: 0,section_update: function() {},reset: function() {},'
             const MapScirpt4 = 'player_move: function() {},physics_update: function() {},render_update: function() {},}'
             let MapInit = '';
@@ -323,7 +324,7 @@
                                 box.position = new BABYLON.Vector3(${center.x}, ${center.y}, ${center.z});
                                 box.physicsImpostor = new BABYLON.PhysicsImpostor(box, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0, friction: 0.6}, scene);
                                 box.rotation = new BABYLON.Vector3(${rotation.x}, ${rotation.y}, ${rotation.z});
-                                BABYLON.Tags.AddTagsTo(box, 'mesh');`;
+                                BABYLON.Tags.AddTagsTo(box, 'mesh platform');`;
                 }
                 for (let i = 0; i < cones.length; i++) {
                     cones[i].computeWorldMatrix(true);
@@ -355,7 +356,7 @@
                                         cone.physicsImpostor.registerOnPhysicsCollide(player.physicsImpostor, function(main, collided) {
                                             window.change_state.die("Died From Cone");
                                         });
-                                        BABYLON.Tags.AddTagsTo(cone, 'mesh');`;
+                                        BABYLON.Tags.AddTagsTo(cone, 'mesh cone');`;
                 }
                 for (let i = 0; i < ends.length; i++) {
                     ends[i].computeWorldMatrix(true);
@@ -385,13 +386,14 @@
                                         end.physicsImpostor.registerOnPhysicsCollide(player.physicsImpostor, function(main, collided) {
                                             window.change_state.win();
                                         });
-                                        BABYLON.Tags.AddTagsTo(end, 'mesh');`;
+                                        BABYLON.Tags.AddTagsTo(end, 'mesh end');`;
                 }
                 eval(MapInit)
                 return MapInit
             }
             $("#Export").click(function(){
-                $("#ExportMap").val(MapScript1+ExportMap()+MapScirpt2+MapScirpt3+MapScirpt4);
+                const script = MapScript1+ExportMap()+MapScirpt2+MapScirpt3+MapScirpt4
+                $("#ExportMap").val(script);
             })
 
             $('#PracticeX').val('0');
@@ -517,7 +519,6 @@
     <script type="text/javascript" src="/libraries/babylon.js"></script>
     <script type="text/javascript" src="/scripts/fov.js?v=0.179"></script>
     <script type="text/javascript" src="/scripts/change_state.js?v=0.179"></script>
-    <script type="text/javascript" src="/scripts/decorations.js?v=0.179"></script>
     <script type="text/javascript" src="/scripts/maker.js?v=0.179"></script>
     <script type="text/javascript" src="/scripts/alias.js?v=0.179"></script>
     <script type="text/javascript" src="/scripts/const_controller.js?v=0.179"></script>
