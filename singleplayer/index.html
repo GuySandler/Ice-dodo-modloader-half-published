@@ -140,6 +140,18 @@
                     <p>Scale</p>
                     <input type="text" id="xs"><input type="text" id="ys"><input type="text" id="zs">
                     <br>
+                    <p>Texture</p>
+                        <select id="TextureSelector">
+                            <option value=""></option>
+                            <option value="bright.png">Bright</option>
+                            <option value="dark.png">Dark</option>
+                            <option value="flare.png">Flare</option>
+                            <option value="icedd.png">Icedd</option>
+                            <option value="pm1.png">PM1</option>
+                            <option value="pm2.png">PM2</option>
+                            <option value="skybox.jpg">skybox</option>
+                        </select>
+                    <br>
                     <button class="button" id="ControlButton">Set</button>
                     <br>
                     <button class="button" id="Export">Export Level</button>
@@ -269,7 +281,13 @@
                                xr=meshes[$("#ObjectSelector").val()].rotation.x,yr=meshes[$("#ObjectSelector").val()].rotation.y,zr=meshes[$("#ObjectSelector").val()].rotation.z,
                                xs=meshes[$("#ObjectSelector").val()].scaling.x,ys=meshes[$("#ObjectSelector").val()].scaling.y,zs=meshes[$("#ObjectSelector").val()].scaling.z) {
                 try{meshes[$("#ObjectSelector").val()].position = new BABYLON.Vector3(x,y,z)} catch{}
-                try{meshes[$("#ObjectSelector").val()].rotation = new BABYLON.Vector3(xr,yr,zr)} catch{}
+                try{
+                    var rotationX = BABYLON.Quaternion.RotationAxis(BABYLON.Axis.X, BABYLON.Tools.ToRadians(xr));
+                    var rotationY = BABYLON.Quaternion.RotationAxis(BABYLON.Axis.Y, BABYLON.Tools.ToRadians(yr));
+                    var rotationZ = BABYLON.Quaternion.RotationAxis(BABYLON.Axis.Z, BABYLON.Tools.ToRadians(zr));
+                    var combinedRotation = rotationZ.multiply(rotationY).multiply(rotationX);
+                    meshes[$("#ObjectSelector").val()].rotationQuaternion = combinedRotation;
+                } catch{}
                 try{meshes[$("#ObjectSelector").val()].scaling = new BABYLON.Vector3(xs,ys,zs)} catch{}
             }
             $("#ControlButton").click(function() {
