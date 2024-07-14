@@ -20,10 +20,14 @@ if (skinId > 57) {
     return JSON.parse(localStorage.getItem("CupImages"))[skinId-58]
 }
 // ...
-if (scriptUrl.substring(0,4) == "/map") {script.src = scriptUrl;}
+if (cupId == 31) {
+    script.innerHTML = scriptUrl;
+  }
+else if (scriptUrl.substring(0,4) == "/map") {script.src = scriptUrl;}
 else {script.innerHTML = scriptUrl}
 script.id = "map-script";
-if (scriptUrl.substring(0,4) != "/map"){resolve2()}
+if (cupId != 31) {if (scriptUrl.substring(0,4) != "/map"){resolve2()}}
+
 // ...
 if (mapUrl == null) {
     var customMap = JSON.parse(localStorage.getItem("CustomMaps"));
@@ -36,3 +40,10 @@ if (mapUrl == null) {
 }
 // ...
 await FMapLoader.loadMap(this.mainState.mapListing.mapId, this.mainState.mapUrl);
+// ...
+if (cupId == 31) {
+    switch(mapId){
+        case "tut1":
+            return dodoCup.tut1
+    }
+}
