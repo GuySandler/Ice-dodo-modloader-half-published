@@ -20,9 +20,8 @@ if (skinId > 57) {
     return JSON.parse(localStorage.getItem("CupImages"))[skinId-58]
 }
 // ...
-if (cupId == 31) {
-    script.innerHTML = scriptUrl;
-  }
+console.log(dodoCup[0])
+if (scriptUrl.substring(0,4) == '{"ti') {console.log("did the thing");script.innerHTML = "var map="+scriptUrl;}
 else if (scriptUrl.substring(0,4) == "/map") {script.src = scriptUrl;}
 else {script.innerHTML = scriptUrl}
 script.id = "map-script";
