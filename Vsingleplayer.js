@@ -42,21 +42,24 @@ if (mapUrl == null) {
 // ...
 await FMapLoader.loadMap(this.mainState.mapListing.mapId, this.mainState.mapUrl);
 // ...
+await FMapLoader.loadMap(this.mainState.mapListing.mapId, this.mainState.mapUrl, this.mainState.mapListing.cupId, this.mainState.mapListing.num);
+// ...
+static async loadMap(mapId, mapUrl, cupId, num) {
+// ...
+static getUrl(mapId, mapUrl, cupId, num) {
+// ...
 if (cupId == 31) {
-    switch(mapId){
-        case "tut1":
-            fetch('../dodoCup.json')
-            .then(response => {
-                if (!response.ok) {
-                throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data.tut1);
-            })
-            .catch(error => {
-                console.error('Error fetching the JSON file:', error);
-            });break;
-    }
+    fetch('../dodoCup.json')
+    .then(response => {
+        if (!response.ok) {
+        throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data[num]);
+    })
+    .catch(error => {
+        console.error('Error fetching the JSON file:', error);
+    });
 }

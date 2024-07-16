@@ -32,3 +32,5 @@ if (AddMapTocup != null) {
         }
     }
 }
+// ...
+    num: condensedMapListing.num
