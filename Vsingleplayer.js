@@ -1,3 +1,5 @@
+import {dodoCup} from "../dodoCup.js";
+
 // ...
 if (skinId > 57) {
     return JSON.parse(localStorage.getItem("CupImages"))[skinId-58];
@@ -21,7 +23,7 @@ if (skinId > 57) {
 }
 // ...
 console.log(dodoCup[0])
-if (scriptUrl.substring(0,4) == '{"ti') {console.log("did the thing");script.innerHTML = "var map="+scriptUrl;}
+if (scriptUrl.substring(0,4) == 'var ') {console.log("did the thing");script.innerHTML = scriptUrl;}
 else if (scriptUrl.substring(0,4) == "/map") {script.src = scriptUrl;}
 else {script.innerHTML = scriptUrl}
 script.id = "map-script";
@@ -43,6 +45,18 @@ await FMapLoader.loadMap(this.mainState.mapListing.mapId, this.mainState.mapUrl)
 if (cupId == 31) {
     switch(mapId){
         case "tut1":
-            return dodoCup.tut1
+            fetch('../dodoCup.json')
+            .then(response => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data.tut1);
+            })
+            .catch(error => {
+                console.error('Error fetching the JSON file:', error);
+            });break;
     }
 }
